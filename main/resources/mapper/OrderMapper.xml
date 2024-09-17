@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qst.crop.dao.OrderDao" >
+  <resultMap id="BaseResultMap" type="com.qst.crop.entity.Order" >
+    <id column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="picture" property="picture" jdbcType="VARCHAR" />
+    <result column="own_name" property="ownName" jdbcType="VARCHAR" />
+    <result column="cooperation_name" property="cooperationName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    order_id, title, price, content, order_status, type, picture, own_name, cooperation_name,
+    create_time, update_time, address
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+
+  </select>
+
+  <select id="findAllSource" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where type='goods'
+  </select>
+
+  <select id="findByKeys" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where content like concat('%', #{keys}, '%')
+  </select>
+
+  <select id="findSourceByKeys" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where content like concat('%', #{keys}, '%')
+    and type = 'goods'
+  </select>
+
+  <!--个人页面货源查找-->
+  <select id="selectByUserName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where type = #{type}
+    and own_name = #{userName}
+  </select>
+
+  <!--个人页面货源条件查询-->
+  <select id="selectMySourceByKeys" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where content like concat('%', #{keys}, '%')
+    and type = 'goods'
+    and own_name = #{userName}
+  </select>
+
+  <!-- 查询所有需求订单 -->
+  <select id="findAllNeeds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where type = 'needs'
+  </select>
+
+  <!-- 根据关键字搜索需求订单 -->
+  <select id="findNeedsByKeys" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where content like concat('%', #{keys}, '%')
+    and type = 'needs'
+  </select>
+
+  <!-- 根据关键字和用户名搜索用户的需求订单 -->
+  <select id="selectMyNeedsByKeys" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_order
+    where content like concat('%', #{keys}, '%')
+    and type = 'needs'
+    and own_name = #{userName}
+  </select>
+
+  <!-- 删除 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 增加 -->
+  <insert id="insert" parameterType="com.qst.crop.entity.Order">
+    insert into tb_order (order_id, title, price,
+                          content, order_status, type,
+                          picture, own_name, cooperation_name,
+                          create_time, update_time, address
+    )
+    values (#{orderId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
+            #{content,jdbcType=VARCHAR}, #{orderStatus,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR},
+            #{picture,jdbcType=VARCHAR}, #{ownName,jdbcType=VARCHAR}, #{cooperationName,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{address,jdbcType=VARCHAR}
+           )
+  </insert>
+
+  <!-- 有选择地增加 -->
+  <insert id="insertSelective" parameterType="com.qst.crop.entity.Order">
+    insert into tb_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="picture != null" >
+        picture,
+      </if>
+      <if test="ownName != null" >
+        own_name,
+      </if>
+      <if test="cooperationName != null" >
+        cooperation_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null" >
+        #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="ownName != null" >
+        #{ownName,jdbcType=VARCHAR},
+      </if>
+      <if test="cooperationName != null" >
+        #{cooperationName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!-- 有选择地更新 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.qst.crop.entity.Order">
+    update tb_order
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="picture != null" >
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="ownName != null" >
+        own_name = #{ownName,jdbcType=VARCHAR},
+      </if>
+      <if test="cooperationName != null" >
+        cooperation_name = #{cooperationName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+
+  <!-- 更新 -->
+  <update id="updateByPrimaryKey" parameterType="com.qst.crop.entity.Order">
+    update tb_order
+    set title = #{title,jdbcType=VARCHAR},
+        price = #{price,jdbcType=DECIMAL},
+        content = #{content,jdbcType=VARCHAR},
+        order_status = #{orderStatus,jdbcType=INTEGER},
+        type = #{type,jdbcType=VARCHAR},
+        picture = #{picture,jdbcType=VARCHAR},
+        own_name = #{ownName,jdbcType=VARCHAR},
+        cooperation_name = #{cooperationName,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        address = #{address,jdbcType=VARCHAR}
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="addOrder" parameterType="com.qst.crop.entity.Order">
+    insert into tb_order (title, price, content, order_status, type, picture, own_name, cooperation_name, create_time, update_time, address)
+    values (#{title}, #{price}, #{content}, #{orderStatus}, #{type}, #{picture}, #{ownName}, #{cooperationName}, #{createTime}, #{updateTime}, #{address})
+  </insert>
+
+  <delete id="deleteOrder" parameterType="com.qst.crop.entity.Order">
+    delete from tb_order where order_id=#{orderId,jdbcType=INTEGER}
+  </delete>
+
+ <update id="takeDown">
+    update tb_order
+    set order_status = 1
+    where order_id = #{orderId};
+  </update>
+
+  <update id="takeUp">
+    update tb_order
+    set order_status = 0
+    where order_id = #{orderId};
+  </update>
+</mapper>
